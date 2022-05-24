@@ -1,8 +1,10 @@
 package by.sapra.telegrambot.bot;
 
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
@@ -27,8 +29,16 @@ public class SapraTestgramBot extends TelegramLongPollingBot {
         return botToken;
     }
 
+    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            SendMessage sendMessage = SendMessage.builder()
+                    .chatId(update.getMessage().getChatId().toString())
+                    .text(update.getMessage().getText())
+                    .build();
 
+            execute(sendMessage);
+        }
     }
 }
